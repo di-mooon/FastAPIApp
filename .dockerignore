@@ -1,0 +1,7 @@
+.git
+venv
+.env.example
+.gitignore
+docker-compose.yml
+Dockerfile
+sounds
