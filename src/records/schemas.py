@@ -6,11 +6,6 @@ from pydantic import BaseModel, validator
 from src.constants import MAX_FILENAME_LENGTH, WAV_FORMAT
 
 
-class RecordCreate(BaseModel):
-    user_id: int
-    access_token: str
-
-
 class RecordResponse(BaseModel):
     url: str
 

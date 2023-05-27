@@ -7,12 +7,12 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from src.common.utils import init_logging
 from src.database import init_models
-from src.questions.router import question_router
+from src.quiz.router import quiz_router
 from src.records.router import record_router
 from src.users.router import user_router
 
 app = FastAPI()
-app.include_router(question_router)
+app.include_router(quiz_router)
 app.include_router(user_router)
 app.include_router(record_router)
 logger = logging.getLogger()

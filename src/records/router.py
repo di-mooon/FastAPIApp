@@ -1,6 +1,7 @@
 import logging
 import os.path
 from hashlib import sha256
+from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Request, UploadFile, status
 from fastapi.responses import FileResponse
@@ -53,9 +54,16 @@ async def add_record(user: currentUser, file: UploadFile, request: Request, db: 
 
 
 @record_router.get("/")
-async def download_record(user: currentUser, record_id: str, db: dbSession):
+async def download_record(user: currentUser, record_id: UUID, db: dbSession):
     record = await Record.get_by_id(db=db, record_id=record_id)
-    record_path = RECORDS_DIR / record.sha256
-    if not record or record and record.user_id != user.id or not record_path.exists():
+    if not record:
         raise RecordNotFoundError(status_code=status.HTTP_404_NOT_FOUND, detail='Record not found')
+
+    record_path = RECORDS_DIR / record.sha256
+    if not record_path.exists():
+        raise RecordNotFoundError(status_code=status.HTTP_404_NOT_FOUND, detail='Record not found')
+
+    if record.user_id != user.id:
+        raise RecordNotFoundError(status_code=status.HTTP_403_FORBIDDEN, detail='No record access')
+
     return FileResponse(filename=record.name, path=record_path)

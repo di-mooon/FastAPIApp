@@ -9,7 +9,7 @@ QUIZ_URL = 'https://jservice.io/api/random'
 logger = logging.getLogger()
 
 
-async def fetch_question_from_api(num_questions: int) -> list | None:
+async def fetch_question_from_api(num_questions: int) -> list[dict] | None:
     try:
         async with AsyncClient() as client:
             response = await client.get(url=QUIZ_URL, params={'count': num_questions})

@@ -4,15 +4,15 @@ from fastapi import HTTPException, status
 from fastapi.routing import APIRouter
 
 from src.common.dependencies import dbSession
-from src.questions.models import Question
-from src.questions.schemas import QuestionCreate, QuestionResponse, QuizRequest
-from src.questions.service import fetch_question_from_api
+from src.quiz.models import Quiz
+from src.quiz.schemas import QuizCreate, QuizResponse, QuizRequest
+from src.quiz.service import fetch_question_from_api
 
-question_router = APIRouter(prefix='/questions', tags=['questions'])
+quiz_router = APIRouter(prefix='/quiz', tags=['quiz'])
 logger = logging.getLogger()
 
 
-@question_router.post('/', response_model=QuestionResponse)
+@quiz_router.post('/', response_model=QuizResponse)
 async def create_questions(quiz_request: QuizRequest, db: dbSession):
     num_created_questions = 0
     while num_created_questions < quiz_request.questions_num:
@@ -24,19 +24,19 @@ async def create_questions(quiz_request: QuizRequest, db: dbSession):
             )
         new_questions = {}
         for question in data:
-            created_question = QuestionCreate(question=question['question'], answer=question['answer'])
+            created_question = QuizCreate(question=question['question'], answer=question['answer'])
             new_questions[question['question']] = created_question
 
-        exists_questions = Question.read_by_questions(db=db, questions=list(new_questions.keys()))
+        exists_questions = Quiz.read_by_questions(db=db, questions=list(new_questions.keys()))
 
         async for exists_question in exists_questions:
             logger.info(f'Question "{exists_question.question}" already exists')
             del new_questions[exists_question.question]
 
-        await Question.create(db=db, questions=list(new_questions.values()))
+        await Quiz.create(db=db, questions=list(new_questions.values()))
         num_created_questions += len(new_questions)
 
     logger.info(f'Created {num_created_questions} questions')
-    last_question = await Question.get_last_question(db)
+    last_question = await Quiz.get_last_question(db)
 
-    return QuestionResponse(question=last_question.question, answer=last_question.answer, created=last_question.created)
+    return QuizResponse(question=last_question.question, answer=last_question.answer, created=last_question.created)

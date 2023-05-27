@@ -3,12 +3,12 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 
-class QuestionCreate(BaseModel):
+class QuizCreate(BaseModel):
     question: str
     answer: str
 
 
-class QuestionResponse(QuestionCreate):
+class QuizResponse(QuizCreate):
     created: datetime
 
 
