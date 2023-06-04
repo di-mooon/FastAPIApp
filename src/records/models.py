@@ -41,6 +41,6 @@ class Record(Base):
         return await db.scalar(query)
 
     @classmethod
-    async def get_record_by_sha256(cls, db: AsyncSession, record_sha256: str) -> Record | None:
+    async def get_by_sha256(cls, db: AsyncSession, record_sha256: str) -> Record | None:
         query = select(cls).where(cls.sha256 == record_sha256).options(joinedload(cls.user))
         return await db.scalar(query)

@@ -3,7 +3,7 @@ import logging
 from fastapi import HTTPException, status
 from fastapi.routing import APIRouter
 
-from src.common.dependencies import dbSession
+from src.common.dependencies import DBSession
 from src.quiz.models import Quiz
 from src.quiz.schemas import QuizCreate, QuizResponse, QuizRequest
 from src.quiz.service import fetch_question_from_api
@@ -13,7 +13,7 @@ logger = logging.getLogger()
 
 
 @quiz_router.post('/', response_model=QuizResponse)
-async def create_questions(quiz_request: QuizRequest, db: dbSession):
+async def create_questions(quiz_request: QuizRequest, db: DBSession):
     num_created_questions = 0
     while num_created_questions < quiz_request.questions_num:
         data = await fetch_question_from_api(num_questions=quiz_request.questions_num - num_created_questions)
